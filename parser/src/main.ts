@@ -6,6 +6,7 @@ import { QueueFactory } from "./bullmq/queue";
 import { WorkerFactory } from "./bullmq/worker";
 import WorkerRouter from "./bullmq/worker-router";
 import { registerWorkers } from "./parser-service/parser.router";
+import { startParsing } from "./parser-service/parser.processor";
 
 export const DI = {} as {
   parserQueue: QueueFactory;
@@ -13,7 +14,7 @@ export const DI = {} as {
   workerRouter: typeof WorkerRouter;
 };
 
-export const initMl = async () => {
+export const init = (async () => {
   const redisConnectionOptions: RedisConnectionOptions = {
     host: config.database.redis.host,
     port: +config.database.redis.port,
@@ -24,10 +25,15 @@ export const initMl = async () => {
   DI.parserQueue = new QueueFactory("parser", {
     redis: redisConnectionOptions,
   });
-  DI.parserWorker = new WorkerFactory("parser", DI.workerRouter.getDynamicProcessor(), {
-    redis: redisConnectionOptions,
-  });
+  DI.parserWorker = new WorkerFactory(
+    "parser",
+    DI.workerRouter.getDynamicProcessor(),
+    {
+      redis: redisConnectionOptions,
+    }
+  );
 
   registerWorkers();
   console.log("UP");
-};
+  startParsing();
+})();
