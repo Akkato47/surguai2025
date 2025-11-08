@@ -90,7 +90,10 @@ export const startParsing = async () => {
     //     if (deals.status !== 200) throw new Error(deals.statusText);
     //   }
     // }
-    const result = {} as IParsedResponse;
+    const result = {
+      name: "TEst",
+      deals: [{ price: 123124, name: "deal1" }],
+    } as IParsedResponse;
     DI.parserQueue.addJob("parser_done", result);
   } catch (error) {
     console.error(error);

@@ -5,7 +5,7 @@ import { getAnalyze } from "./ml.processor";
 
 const registerWorkers = () =>
   DI.workerRouter.add<GetAnalyzeData, any>({
-    prefix: "ml_analyze",
+    prefix: "parser_done",
     func: getAnalyze,
   });
 

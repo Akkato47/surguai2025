@@ -5,12 +5,13 @@ import axios from "axios";
 import type { GetAnalyzeData } from "./types/analyze.types";
 import { DI } from "../main";
 import config from "../config";
+import { v4 } from "uuid";
 
 export const getAnalyze = async (job: Job<GetAnalyzeData, any>) => {
   console.log(job.data);
   return;
-  const chatId = job.data.chatId;
-  const message = job.data.message;
+  const chatId = v4();
+  const message = job.data;
   const payload = {
     chatId,
     message,
