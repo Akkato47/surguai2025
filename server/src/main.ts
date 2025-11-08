@@ -16,7 +16,6 @@ import config from './config';
 import redisClient from './db/redis';
 import { logger, LoggerStream } from './lib/loger';
 import { sendResponse } from './lib/reponse';
-import { initMl } from './ml-service/ml';
 import router from './modules/api.routes';
 import { processMlResponse } from './modules/lead/lead.processor';
 import swaggerDocument from './swagger.json';
@@ -96,24 +95,23 @@ export const init = (async () => {
     password: config.database.redis.password
   };
 
-  const scrapperQueue = new QueueFactory('scrapper', {
+  const scrapperQueue = new QueueFactory('parser', {
     redis: redisConnectionOptions
   });
   const mlQueue = new QueueFactory('ml', { redis: redisConnectionOptions });
-  const scrapperWorker = new WorkerFactory('scrapper', DI.workerRouter.getDynamicProcessor(), {
+  const scrapperWorker = new WorkerFactory('parser', DI.workerRouter.getDynamicProcessor(), {
     redis: redisConnectionOptions
   });
   const mlWorker = new WorkerFactory('ml', DI.workerRouter.getDynamicProcessor(), {
     redis: redisConnectionOptions
   });
 
-  mlQueue.addJob('done_analyse', { prefix: 'done_analyse' });
+  // mlQueue.addJob('done_analyse', { prefix: 'done_analyse' });
+  mlQueue.addJob('ml_analyze', { prefix: 'ml_analyze' });
 
   DI.server = app.listen(port, () => logger.info(`listening in port:${port}`));
   DI.mlQueue = mlQueue;
   DI.scrapperQueue = scrapperQueue;
   DI.mlWorker = scrapperWorker;
   DI.scrapperWorker = mlWorker;
-
-  await initMl();
 })();

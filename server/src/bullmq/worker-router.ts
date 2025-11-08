@@ -24,7 +24,7 @@ export class WorkerRouter {
 
   getDynamicProcessor<TData = any, TResult = any>() {
     return async (job: Job<TData & { prefix?: string }, TResult>) => {
-      const prefix = job.data.prefix;
+      const prefix = job.name;
       if (!prefix) {
         throw new Error('Job does not contain prefix field');
       }
